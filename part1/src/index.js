@@ -1,6 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const Part = (props) => {
+  return (
+    <p>{props.part} {props.exercises}</p>
+  )
+}
+
 const Header = (props) => {
   return (
     <h1>{props.course}</h1>
@@ -8,15 +14,12 @@ const Header = (props) => {
 }
 
 const Content = (props) => {
-  const elements = []
-  props.part.forEach(part => {
-    var pos = props.part.indexOf(part)
-    elements.push(<p>{part} {props.exercises[pos]}</p>)
-  })
   return (
-  <>
-    {elements}
-  </>
+  <div>
+    <Part part={props.part[0]} exercises={props.exercises[0]} />
+    <Part part={props.part[1]} exercises={props.exercises[1]} />
+    <Part part={props.part[2]} exercises={props.exercises[2]} />
+  </div>
   )
 }
 
