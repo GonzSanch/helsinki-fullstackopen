@@ -24,8 +24,8 @@ const Content = (props) => {
 }
 
 const Total = (props) => {
-  var total = 0;
-  for (var i in props.exercises) {
+  let total = 0;
+  for (let i in props.exercises) {
     total += props.exercises[i]
   }
   return (
