@@ -14,6 +14,29 @@ const Feedback = ({ feedback }) => (
         <Button handleClick={feedback.bad.handleClick} text={feedback.bad.text}/>
     </div>
     )
+const Statistic = ({ text, value }) => {
+    if (text === "positive" || text === "average")
+        value = value.toFixed(2)
+    if (text === "positive") {
+        return (
+            <tbody>
+                <tr>
+                    <td>{text}</td>
+                    <td>{value} %</td>
+                </tr>
+            </tbody>
+        )
+    }
+    return (
+        <tbody>
+            <tr>
+                <td>{text}</td>
+                <td>{value}</td>
+            </tr>
+        </tbody>
+    )
+}
+    
 
 const Statistics = ({ statistics }) => {
     let good = statistics.good;
@@ -34,14 +57,14 @@ const Statistics = ({ statistics }) => {
     return (
         <div>
             <h1>statistics</h1>
-            <p>
-                good: {good} <br />
-                neutral: {neutral} <br />
-                bad: {bad} <br />
-                total: {total}<br />
-                all: {average}<br />
-                positive: {positive} %<br />
-            </p>
+            <table>
+                <Statistic text={'good'} value={good} />
+                <Statistic text="neutral" value={neutral} />
+                <Statistic text="bad" value={bad} />
+                <Statistic text="all" value={total} />
+                <Statistic text="average" value={average} />
+                <Statistic text="positive" value={positive} />
+            </table>
         </div>
     )
 }
