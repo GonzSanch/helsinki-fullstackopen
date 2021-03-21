@@ -19,6 +19,9 @@ const Statistics = ({ statistics }) => {
     let good = statistics.good;
     let neutral = statistics.neutral;
     let bad = statistics.bad;
+    let total = good + neutral + bad;
+    let average = ((good*1) + (bad*-1))/total;
+    let positive = (good / total) * 100;
     return (
         <div>
             <h1>statistics</h1>
@@ -26,7 +29,9 @@ const Statistics = ({ statistics }) => {
                 good: {good} <br></br>
                 neutral: {neutral} <br></br>
                 bad: {bad} <br></br>
-                total: {good + neutral + bad}<br></br>
+                total: {total}<br></br>
+                all: {average}<br></br>
+                positive: {positive} %<br></br>
             </p>
         </div>
     )
