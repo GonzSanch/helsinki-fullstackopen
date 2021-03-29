@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import Axios from 'axios'
 import axios from 'axios'
 
 const Filter = ({ value, handler }) => (
@@ -80,3 +79,4 @@ const App = () => {
 }
 
 export default App;
+  
