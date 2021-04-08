@@ -25,11 +25,24 @@ const PersonsList = ({ toShow, DeletePerson }) => (
   </div>
 )
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={message.status}>
+      {message.content}
+    </div>  
+  )
+}
+
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setfilter ] = useState('')
+  const [ message, setMessage ] = useState('')
   
   useEffect(() => {
     personsService
@@ -54,16 +67,24 @@ const App = () => {
             setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
             setNewName('')
             setNewNumber('')
+            setMessage({content: `Updated ${newName}`, status:'success'})
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
           })
+        }
       }
-    }
-    else {
-      personsService
+      else {
+        personsService
         .create(NewPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          setMessage({content: `Added ${newName}`, status:'success'})
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
     }
   }
@@ -74,6 +95,16 @@ const App = () => {
         .deletePerson(Person.id)
         .then(returnedPerson => {
           setPersons(persons.filter(per => per.id !== Person.id))
+          setMessage({content: `Deleted ${Person.name}`, status:'success'})
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          setMessage({content: `Information of ${Person.name} has already been removed from server`, status:'error'})
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
     }
   }
@@ -93,6 +124,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter value={filter} handler={handleFilter} />
       <h2>Add a new</h2>
       <AddForm submit={AddNewPerson} value1={newName} handler1={handleNewName} value2={newNumber} handler2={handleNewNumber} />
