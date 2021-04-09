@@ -1,8 +1,9 @@
 const { request, response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 let persons = [
     {
@@ -28,16 +29,20 @@ let persons = [
 ]
 
 const logger = morgan(function (tokens, req, res) {
-    return [
+    const ret = [
       tokens.method(req, res),
       tokens.url(req, res),
       tokens.status(req, res),
       tokens.res(req, res, 'content-length'), '-',
       tokens['response-time'](req, res), 'ms',
-      JSON.stringify(req.body)
-    ].join(' ')
+    ]
+    if (tokens.method(req, res) === 'POST') ret.push(JSON.stringify(req.body))
+
+    return ret.join(' ')
   })
 
+app.use(express.static('build'))
+app.use(cors())
 app.use(express.json())
 app.use(logger)
 
@@ -48,10 +53,6 @@ const generateId = () => {
 }
 
 const generateRandomId = () => Math.floor(Math.random() * 10**4)
-
-app.get('/', (request, response) => {
-    response.end(`API GET '/'`)
-})
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
