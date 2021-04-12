@@ -122,7 +122,7 @@ describe('most blogs', () => {
         expect(listHelper.mostBlogs(listEmpty)).toBe(null)
     })
 
-    test('when list has only one blog, favourite is equeals to it', () => {
+    test('when list has only one blog, author with most blogs is equeals to it', () => {
         const listWithOnlyOne = [
             {
                 _id: '5a422aa71b54a676234d17f8',
@@ -136,7 +136,6 @@ describe('most blogs', () => {
 
         expect(listHelper.mostBlogs(listWithOnlyOne)).toEqual({ author: listWithOnlyOne[0].author, blogs: 1 })
     })
-    /*
     test('of a bigger list is calculated right', () => {
         const biggerList = [
             {
@@ -158,15 +157,67 @@ describe('most blogs', () => {
             {
                 _id: '5a422aa71b54a676234d17f8',
                 title: 'Go To Statement Considered Harmful',
-                author: 'Edsger W. Dijkstra',
+                author: 'tuk',
                 url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
                 likes: 10,
                 __v: 0
             }
         ]
 
-        expect(listHelper.favoriteBlog(biggerList)).toEqual(biggerList[2])
+        expect(listHelper.mostBlogs(biggerList)).toEqual({ author: biggerList[0].author, blogs: 2 })
     })
-    */
+})
+
+describe('most likes', () => {
+    test('of empty list is null', () => {
+        const listEmpty = []
+
+        expect(listHelper.mostLikes(listEmpty)).toBe(null)
+    })
+
+    test('when list has only one blog, author with most likes is it', () => {
+        const listWithOnlyOne = [
+            {
+                _id: '5a422aa71b54a676234d17f8',
+                title: 'Go To Statement Considered Harmful',
+                author: 'Edsger W. Dijkstra',
+                url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+                likes: 5,
+                __v: 0
+            }
+        ]
+
+        expect(listHelper.mostLikes(listWithOnlyOne)).toEqual({ author: listWithOnlyOne[0].author, likes: 5 })
+    })
+    test('of a bigger list is calculated right', () => {
+        const biggerList = [
+            {
+                _id: '5a422aa71b54a676234d17f8',
+                title: 'Go To Statement Considered Harmful',
+                author: 'Edsger W. Dijkstra',
+                url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+                likes: 2,
+                __v: 0
+            },
+            {
+                _id: '5a422aa71b54a676234d17f8',
+                title: 'Go To Statement Considered Harmful',
+                author: 'Edsger W. Dijkstra',
+                url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+                likes: 5,
+                __v: 0
+            },
+            {
+                _id: '5a422aa71b54a676234d17f8',
+                title: 'Go To Statement Considered Harmful',
+                author: 'tuk',
+                url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+                likes: 10,
+                __v: 0
+            }
+        ]
+
+        expect(listHelper.mostLikes(biggerList)).toEqual({ author: biggerList[0].author, likes: 7 })
+    })
 })
 
