@@ -155,6 +155,27 @@ describe('Specific blog', () => {
     })
 })
 
+describe('Update blog', () => {
+    test('a blog can be updated', async () => {
+        const blogAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogAtStart[0]
+
+        const updateProperties = {
+            author: 'Darwin',
+            likes: 5
+        }
+
+        await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(updateProperties)
+            .expect(200)
+
+        const updatedBlog = await helper.blogWithId(blogToUpdate.id)
+        expect(updatedBlog.author).toBe('Darwin')
+        expect(updatedBlog.likes).toBe(5)
+    })
+})
+
 
 afterAll(() => {
     mongoose.connection.close()
