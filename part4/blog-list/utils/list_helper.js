@@ -20,7 +20,8 @@ const favoriteBlog = (blogs) => {
 const mostBlogs = (blogs) => {
     const getAuthor = (blogs) => {
         return _(blogs).groupBy('author').values().map(group =>
-            ({ author:group[0].author, blogs: group.length })).head()
+            ({ author:group[0].author, blogs: group.length }))
+            .orderBy('blogs', 'desc').head()
     }
 
     return blogs.length === 0
@@ -34,8 +35,7 @@ const mostLikes = (blogs) => {
             .map((group, author) => ({
                 author: author,
                 likes: _.sumBy(group, 'likes')
-            }))
-            .head()
+            })).orderBy('likes', 'desc').head()
     }
     return blogs.length === 0
         ? null
