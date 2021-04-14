@@ -3,8 +3,10 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
+const bcrypt = require('bcrypt')
 
 const Blog = require('../models/blogs')
+const User = require('../models/users')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -173,6 +175,51 @@ describe('Update blog', () => {
         const updatedBlog = await helper.blogWithId(blogToUpdate.id)
         expect(updatedBlog.author).toBe('Darwin')
         expect(updatedBlog.likes).toBe(5)
+    })
+})
+
+describe('Test users', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new User({ username:'root', passwordHash })
+
+        await user.save()
+    })
+
+    test('create a new fresh user', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'gsanchez',
+            name: 'Gonzalo',
+            password: 'someCamelCaseSecret'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(users => users.username)
+        expect(usernames).toContain(newUser.username)
+    })
+
+    test('get all users', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const response = await api
+            .get('/api/users')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        expect(response.body.length).toEqual(usersAtStart.length)
+        expect(response.body).toEqual(usersAtStart)
     })
 })
 
