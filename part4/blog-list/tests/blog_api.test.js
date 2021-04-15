@@ -3,14 +3,28 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
-const bcrypt = require('bcrypt')
 
 const Blog = require('../models/blogs')
 const User = require('../models/users')
 
+let authToken
+
 beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+    await User.deleteMany({})
+
+    await User.insertMany(await helper.initialUsers())
+    const root = await User.findOne({ username: 'root' })
+
+    const blogs = helper.initialBlogs
+        .map(blog => ({ ...blog, user: root._id }))
+
+    await Blog.insertMany(blogs)
+
+    const response = await api
+        .post('/api/login')
+        .send({ username: 'root', password: 'sekret' })
+    authToken = response.body.token
 })
 
 test('id is defined in blog', async () => {
@@ -52,24 +66,6 @@ describe('get blogs', () => {
 })
 
 describe('post a blog', () => {
-
-    let authToken
-
-    beforeEach(async () => {
-        await User.deleteMany({})
-
-        const passwordHash = await bcrypt.hash('sekret', 10)
-        const user = new User({ username:'root', passwordHash })
-
-        await user.save()
-
-        const response = await api
-            .post('/api/login')
-            .send({ username:'root', password:'sekret' })
-
-        authToken = response.body.token
-    })
-
     test('a valid blog can be added', async () => {
         const newBlog = {
             title: 'New Blog on the post',
@@ -90,6 +86,20 @@ describe('post a blog', () => {
 
         const contents = blogsAtEnd.map(r => r.title)
         expect(contents).toContain('New Blog on the post')
+    })
+
+    test('a valid blog can not be added without auth', async () => {
+        const newBlog = {
+            title: 'New Blog on the post',
+            author: 'Tester',
+            url: 'localhost',
+            likes: 0
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(401)
     })
 
     test('blog without title is not added', async () => {
@@ -149,6 +159,16 @@ describe('post a blog', () => {
 })
 
 describe('Specific blog', () => {
+
+    let guestToken
+
+    beforeEach(async () => {
+        const guestResponse = await api
+            .post('/api/login')
+            .send({ username: 'guest', password: 'guestSecret' })
+        guestToken = guestResponse.body.token
+    })
+
     test('a specific blog can be viewed', async () => {
         const blogsAtStart = await helper.blogsInDb()
         const blogToView = blogsAtStart[0]
@@ -169,6 +189,7 @@ describe('Specific blog', () => {
 
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', `bearer ${authToken}`)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -177,9 +198,20 @@ describe('Specific blog', () => {
         const contents = blogsAtEnd.map(r => r.title)
         expect(contents).not.toContain(blogToDelete.title)
     })
+
+    test('a blog can not be deleted by other user', async () => {
+        const blogAtStart = await helper.blogsInDb()
+        const blogToDelete = blogAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', `bearer ${guestToken}`)
+            .expect(401)
+    })
 })
 
 describe('Update blog', () => {
+
     test('a blog can be updated', async () => {
         const blogAtStart = await helper.blogsInDb()
         const blogToUpdate = blogAtStart[0]
@@ -191,6 +223,7 @@ describe('Update blog', () => {
 
         await api
             .put(`/api/blogs/${blogToUpdate.id}`)
+            .set('Authorization', `bearer ${authToken}`)
             .send(updateProperties)
             .expect(200)
 
@@ -201,14 +234,6 @@ describe('Update blog', () => {
 })
 
 describe('Test users', () => {
-    beforeEach(async () => {
-        await User.deleteMany({})
-
-        const passwordHash = await bcrypt.hash('sekret', 10)
-        const user = new User({ username:'root', passwordHash })
-
-        await user.save()
-    })
 
     test('create a new fresh user', async () => {
         const usersAtStart = await helper.usersInDb()

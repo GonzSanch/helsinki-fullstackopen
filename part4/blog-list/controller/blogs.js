@@ -1,15 +1,6 @@
 const blogsRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blogs')
-const User = require('../models/users')
-
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7)
-    }
-    return null
-}
+const userExtractor = require('../utils/middleware').userExtractor
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
@@ -30,19 +21,21 @@ blogsRouter.get('/:id', async (request, response) => {
     }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+    const user = request.user
+
+    if (blog.user.toString() === user._id.toString()) {
+        await Blog.findByIdAndRemove(request.params.id)
+        response.status(204).end()
+    } else {
+        return response.status(401).json({ error: 'token invalid' })
+    }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
     const body = request.body
-    const token = getTokenFrom(request)
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!token || !decodedToken.id) {
-        return response.status(401).json({ error: 'token missing or invalid' })
-    }
-    const user = await User.findById(decodedToken.id)
+    const user = request.user
 
     const blog = new Blog({
         title: body.title,
@@ -59,12 +52,18 @@ blogsRouter.post('/', async (request, response) => {
     response.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
     const body = request.body
+    const user = request.user
 
-    const opts = { new: true, runValidators: true, context: 'query' }
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, body, opts)
-    response.json(updatedBlog)
+    const blog = await Blog.findById(request.params.id)
+    if (blog.user.toString() === user._id.toString()) {
+        const opts = { new: true, runValidators: true, context: 'query' }
+        const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, body, opts)
+        response.json(updatedBlog)
+    } else {
+        return response.status(401).json({ error: 'token invalid' })
+    }
 })
 
 module.exports = blogsRouter
