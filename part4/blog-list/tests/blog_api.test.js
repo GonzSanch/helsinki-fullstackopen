@@ -210,6 +210,89 @@ describe('Test users', () => {
         expect(usernames).toContain(newUser.username)
     })
 
+    test('create a new user with a username that already exist', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'Gonzalo',
+            password: 'someCamelCaseSecret'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+
+        expect(usersAtStart.length).toEqual(usersAtStart.length)
+    })
+
+    test('create a user without username must fail', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            name: 'Gonzalo',
+            password: 'someCamelCaseSecret'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+
+        expect(usersAtStart.length).toEqual(usersAtStart.length)
+    })
+
+    test('create a user without password must fail', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'gsanchez',
+            name: 'Gonzalo'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+
+        expect(usersAtStart.length).toEqual(usersAtStart.length)
+    })
+
+    test('create a user with username less than 3 chars must fail', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'gs',
+            name: 'Gonzalo',
+            password: 'someCamelCaseSecret'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+
+        expect(usersAtStart.length).toEqual(usersAtStart.length)
+    })
+
+    test('create a user without password less than 3 chars must fail', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'gsanchez',
+            name: 'Gonzalo',
+            password: 'so'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+
+        expect(usersAtStart.length).toEqual(usersAtStart.length)
+    })
+
     test('get all users', async () => {
         const usersAtStart = await helper.usersInDb()
 
@@ -220,6 +303,18 @@ describe('Test users', () => {
 
         expect(response.body.length).toEqual(usersAtStart.length)
         expect(response.body).toEqual(usersAtStart)
+    })
+
+    test('get single user by id', async () => {
+        const usersAtStart = await helper.usersInDb()
+        const userToFind = usersAtStart[0].id
+
+        const response = await api
+            .get(`/api/users/${userToFind}`)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        expect(response.body).toEqual(usersAtStart[0])
     })
 })
 
