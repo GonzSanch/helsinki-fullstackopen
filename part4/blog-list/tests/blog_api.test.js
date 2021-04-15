@@ -52,6 +52,24 @@ describe('get blogs', () => {
 })
 
 describe('post a blog', () => {
+
+    let authToken
+
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new User({ username:'root', passwordHash })
+
+        await user.save()
+
+        const response = await api
+            .post('/api/login')
+            .send({ username:'root', password:'sekret' })
+
+        authToken = response.body.token
+    })
+
     test('a valid blog can be added', async () => {
         const newBlog = {
             title: 'New Blog on the post',
@@ -62,6 +80,7 @@ describe('post a blog', () => {
 
         await api
             .post('/api/blogs')
+            .set('Authorization', `bearer ${authToken}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -82,6 +101,7 @@ describe('post a blog', () => {
 
         await api
             .post('/api/blogs')
+            .set('Authorization', `bearer ${authToken}`)
             .send(newBlog)
             .expect(400)
 
@@ -98,6 +118,7 @@ describe('post a blog', () => {
 
         await api
             .post('/api/blogs')
+            .set('Authorization', `bearer ${authToken}`)
             .send(newBlog)
             .expect(400)
 
@@ -114,6 +135,7 @@ describe('post a blog', () => {
 
         await api
             .post('/api/blogs')
+            .set('Authorization', `bearer ${authToken}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
