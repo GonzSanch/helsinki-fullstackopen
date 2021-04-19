@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import Notification from './Notification'
 
 const CreateBlogForm = ({
@@ -43,6 +44,11 @@ const CreateBlogForm = ({
             </form>
         </div>
     )
+}
+
+CreateBlogForm.propType = {
+    createBlog: PropTypes.func.isRequired,
+    message: PropTypes.object
 }
 
 export default CreateBlogForm

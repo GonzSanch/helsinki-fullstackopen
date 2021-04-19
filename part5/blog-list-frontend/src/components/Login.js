@@ -1,4 +1,5 @@
 import React from 'react'
+import PropType from 'prop-types'
 import Notification from './Notification'
 
 const LoginForm = ({
@@ -15,7 +16,7 @@ const LoginForm = ({
         <form onSubmit={handleSubmit}>
             <div>
                 username
-          <input
+                <input
                     type="text"
                     autoComplete="username"
                     value={username}
@@ -25,7 +26,7 @@ const LoginForm = ({
             </div>
             <div>
                 password
-          <input
+                <input
                     type="password"
                     autoComplete="current-password"
                     value={password}
@@ -37,5 +38,14 @@ const LoginForm = ({
         </form>
     </div>
 )
+
+LoginForm.propType = {
+    handleSubmit: PropType.func.isRequired,
+    handleUsernameChange: PropType.func.isRequired,
+    handlePasswordChange: PropType.func.isRequired,
+    username: PropType.string,
+    password: PropType.string,
+    message: PropType.object
+}
 
 export default LoginForm
