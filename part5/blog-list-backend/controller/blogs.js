@@ -59,7 +59,9 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
     const blog = await Blog.findById(request.params.id)
     if (blog.user.toString() === user._id.toString()) {
         const opts = { new: true, runValidators: true, context: 'query' }
-        const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, body, opts)
+        const updatedBlog = await Blog
+            .findByIdAndUpdate(request.params.id, body, opts)
+            .populate('user', { username: 1, name: 1 })
         response.json(updatedBlog)
     } else {
         return response.status(401).json({ error: 'token invalid' })
