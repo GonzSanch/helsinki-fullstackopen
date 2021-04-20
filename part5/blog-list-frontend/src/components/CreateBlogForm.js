@@ -13,7 +13,7 @@ const CreateBlogForm = ({
     const handleTitleChange = (event) => {
         setTitle(event.target.value)
     }
-    const handleAuthorChange = (event) => {
+    const handleAuthorChange = ( event ) => {
         setAuthor(event.target.value)
     }
     const handleUrlChange = (event) => {
@@ -33,7 +33,7 @@ const CreateBlogForm = ({
     }
 
     return (
-        <div>
+        <div className='formDiv'>
             <Notification message={message} />
             <h2>Add new Blog</h2>
             <form onSubmit={addBlog}>
