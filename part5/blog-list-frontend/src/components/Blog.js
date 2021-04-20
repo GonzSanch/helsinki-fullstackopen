@@ -5,8 +5,6 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     const [visible, setVisible] = useState(false)
     const [label, setlabel] = useState('view')
 
-    const showVisible = { display: visible ? '' : 'none' }
-
     const toggleVisibility = () => {
         setVisible(!visible)
         setlabel(visible ? 'view' : 'hide')
@@ -34,10 +32,10 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     }
 
     return (
-        <div>
-            <div style={blogStyle}>
-                {blog.title} {blog.author}
-                <div style={showVisible}>
+        <div className='blog' style={blogStyle}>
+            {blog.title} {blog.author}
+            {visible ?
+                <div>
                     <div>{blog.url}</div>
                     <div>{blog.likes}
                         <button onClick={updateLike}>like</button>
@@ -45,16 +43,16 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
                     <div>{blog.user.name}</div>
                     <div><button onClick={del}>delete</button></div>
                 </div>
-                <button onClick={toggleVisibility}>{label}</button>
-            </div>
+                : <div></div>}
+            <button onClick={toggleVisibility}>{label}</button>
         </div>
     )
 }
 
 Blog.propTypes = {
     blog: PropTypes.object.isRequired,
-    updateBlog: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired
+    updateBlog: PropTypes.func,
+    deleteBlog: PropTypes.func
 }
 
 export default Blog
