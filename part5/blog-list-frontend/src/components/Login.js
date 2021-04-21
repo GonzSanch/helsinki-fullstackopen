@@ -17,6 +17,7 @@ const LoginForm = ({
             <div>
                 username
                 <input
+                    id="username"
                     type="text"
                     autoComplete="username"
                     value={username}
@@ -27,6 +28,7 @@ const LoginForm = ({
             <div>
                 password
                 <input
+                    id="password"
                     type="password"
                     autoComplete="current-password"
                     value={password}
@@ -34,7 +36,7 @@ const LoginForm = ({
                     onChange={handlePasswordChange}
                 />
             </div>
-            <button type='submit'>login</button>
+            <button id="login-button" type='submit'>login</button>
         </form>
     </div>
 )

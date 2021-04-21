@@ -37,10 +37,10 @@ const CreateBlogForm = ({
             <Notification message={message} />
             <h2>Add new Blog</h2>
             <form onSubmit={addBlog}>
-                <div>title: <input value={title} onChange={handleTitleChange} /></div>
-                <div>author: <input value={author} onChange={handleAuthorChange} /></div>
-                <div>url: <input value={url} onChange={handleUrlChange} /></div>
-                <div> <button type="submit">create</button> </div>
+                <div>title: <input id="title" value={title} onChange={handleTitleChange} /></div>
+                <div>author: <input id="author" value={author} onChange={handleAuthorChange} /></div>
+                <div>url: <input id="url" value={url} onChange={handleUrlChange} /></div>
+                <div> <button id="createBlog-button" type="submit">create</button> </div>
             </form>
         </div>
     )
