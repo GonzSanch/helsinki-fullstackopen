@@ -109,7 +109,7 @@ const App = () => {
                     setMessage(null)
                 }, 5000)
             } catch (exception) {
-                setMessage({ content: `blog: ${blogToDelete.name} has already been removed from server`, status:'error' })
+                setMessage({ content: `blog: ${blogToDelete.name} has already been removed from server`, status: 'error' })
                 setTimeout(() => {
                     setMessage(null)
                 }, 5000)
@@ -139,11 +139,13 @@ const App = () => {
             <Togglable buttonLabel='new blog' ref={blogFormRef}>
                 <CreateBlogForm createBlog={createBlog} message={message} />
             </Togglable>
-            {blogs
-                .sort((a, b) => b.likes - a.likes)
-                .map(blog =>
-                    <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
-                )}
+            <div id='blogs'>
+                {blogs
+                    .sort((a, b) => b.likes - a.likes)
+                    .map(blog =>
+                        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
+                    )}
+            </div>
         </div>
     )
 }

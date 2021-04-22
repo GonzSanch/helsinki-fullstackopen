@@ -37,14 +37,14 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
             {visible ?
                 <div>
                     <div>{blog.url}</div>
-                    <div id='likes'>{blog.likes}
+                    <div className='likes' >{blog.likes}
                         <button id='like-button' onClick={updateLike}>like</button>
                     </div>
                     <div>{blog.user.name}</div>
                     <div><button onClick={del}>delete</button></div>
                 </div>
                 : <div></div>}
-            <button id='blog-view' onClick={toggleVisibility}>{label}</button>
+            <button className='blog-view' onClick={toggleVisibility}>{label}</button>
         </div>
     )
 }
