@@ -1,15 +1,4 @@
-const initialState = [
-    {
-        content: 'reducer defines how redux store works',
-        important: true,
-        id: 1
-    },
-    {
-        content: 'state of store can contain any data',
-        important: false,
-        id: 2
-    },
-]
+const initialState = []
 
 const noteReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -26,21 +15,19 @@ const noteReducer = (state = initialState, action) => {
                 note.id !== id ? note : changedNote
             )
         }
+        case 'INIT_NOTES':
+            return action.data
         default:
             return state
     }
 }
-
-const generateId = () =>
-    Math.floor(Math.random() * 1000000)
 
 export const createNote = (content) => {
     return {
         type: 'NEW_NOTE',
         data: {
             content,
-            important: false,
-            id: generateId()
+            important: false
         }
     }
 }
@@ -49,6 +36,13 @@ export const toggleImportanceOf = (id) => {
     return {
         type: 'TOGGLE_IMPORTANCE',
         data: { id }
+    }
+}
+
+export const initializeNotes = (notes) => {
+    return {
+        type: 'INIT_NOTES',
+        data: notes
     }
 }
 
