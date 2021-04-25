@@ -7,6 +7,14 @@ const getAll = async () => {
     return response.data
 }
 
+const updateAnecdote = async (id) => {
+    const url = baseUrl+'/'+id
+    const toUpdate = await axios.get(url)
+    toUpdate.data.votes += 1
+    const updated = await axios.put(url, toUpdate.data)
+    return updated.data
+}
+
 const newAnecdote = async (content) => {
     const object = { content, votes: 0 }
     const response = await axios.post(baseUrl, object)
@@ -15,7 +23,8 @@ const newAnecdote = async (content) => {
 
 const anecdote = {
     getAll,
-    newAnecdote
+    newAnecdote,
+    updateAnecdote
 }
 
 export default anecdote
