@@ -1,12 +1,15 @@
 const initialState = ''
 
+let timeoutID
+
 export const setNotification = (content, timeval) => {
     return dispatch => {
+        if (timeoutID) clearTimeout(timeoutID)
         dispatch({
             type: 'SET_NOTIFICATION',
             data: content
         })
-        setTimeout(() => {
+        timeoutID = setTimeout(() => {
             dispatch({
                 type: 'REMOVE'
             })
