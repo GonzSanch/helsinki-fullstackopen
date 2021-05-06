@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Switch, Route, Link, useRouteMatch, Redirect } from "react-router-dom"
+import { useField } from './hooks'
 
 const Menu = () => {
   const padding = {
@@ -57,18 +58,29 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('content', 'text')
+  const author = useField('author', 'text')
+  const info = useField('info', 'text')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      author: author.value,
+      content: content.value,
+      info: info.value,
       votes: 0
     })
+  }
+
+  const resetForm = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
+  const restInput = (obj) => {
+    const {reset, ...rest} = obj
+    return rest
   }
 
   return (
@@ -77,18 +89,19 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...restInput(content)} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...restInput(author)} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input {...restInput(info)} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
       </form>
+        <button onClick={resetForm}>reset</button>
     </div>
   )
 
@@ -131,13 +144,13 @@ const App = () => {
       setNotification(null)
     }, 10000)
   }
-  
+
   const anecdoteById = (id) =>
-  anecdotes.find(a => a.id === id)
-  
+    anecdotes.find(a => a.id === id)
+
   const match = useRouteMatch('/anecdotes/:id')
   const anecdote = match ? anecdoteById(match.params.id) : null
-  
+
   const vote = (id) => {
     const anecdote = anecdoteById(id)
 
@@ -153,10 +166,10 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      <Notification notification={notification}/>
+      <Notification notification={notification} />
       <Switch>
         <Route path="/create">
-          {notification ? <Redirect to="/"/>
+          {notification ? <Redirect to="/" />
             : <CreateNew addNew={addNew} />}
         </Route>
         <Route path="/anecdotes/:id">
