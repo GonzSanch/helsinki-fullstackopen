@@ -1,46 +1,17 @@
 import React, { useState } from 'react'
 import { Switch, Route, Link, useRouteMatch, Redirect } from "react-router-dom"
 import { useField } from './hooks'
-import styled from 'styled-components'
-
-const Button = styled.button`
-background: Bisque;
-font-size: 1em;
-margin: 1em;
-padding: 0.25em 1em;
-border: 2px solid Chocolate;
-border-radius: 3px;
-`
-const Input = styled.input`
-margin: 0.25em;
-`
-
-const Page = styled.div`
-padding: 1em;
-background: papayawhip;
-`
-
-const Navigation = styled.div`
-background: BurlyWood;
-padding: 1em;
-`
-
-const FooterDiv = styled.div`
-background: Chocolate;
-padding: 1em;
-margin-top: 1em;
-`
 
 const Menu = () => {
   const padding = {
     paddingRight: 5
   }
   return (
-    <Navigation>
+    <div>
       <Link to='/' style={padding}>anecdotes</Link>
       <Link to='create' style={padding}>create new</Link>
       <Link to='/about' style={padding}>about</Link>
-    </Navigation>
+    </div>
   )
 }
 
@@ -79,11 +50,11 @@ const About = () => (
 )
 
 const Footer = () => (
-  <FooterDiv>
+  <div>
     Anecdote app for <a href='https://courses.helsinki.fi/fi/tkt21009'>Full Stack -websovelluskehitys</a>.
 
     See <a href='https://github.com/fullstack-hy/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js</a> for the source code.
-  </FooterDiv>
+  </div>
 )
 
 const CreateNew = (props) => {
@@ -118,19 +89,19 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <Input {...restInput(content)} />
+          <input {...restInput(content)} />
         </div>
         <div>
           author
-          <Input {...restInput(author)} />
+          <input {...restInput(author)} />
         </div>
         <div>
           url for more info
-          <Input {...restInput(info)} />
+          <input {...restInput(info)} />
         </div>
-        <Button type="submit">create</Button>
+        <button type="submit">create</button>
       </form>
-        <Button onClick={resetForm}>reset</Button>
+        <button onClick={resetForm}>reset</button>
     </div>
   )
 
@@ -181,7 +152,7 @@ const App = () => {
   const anecdote = match ? anecdoteById(match.params.id) : null
 
   return (
-    <Page>
+    <div>
       <h1>Software anecdotes</h1>
       <Menu />
       <Notification notification={notification} />
@@ -201,7 +172,7 @@ const App = () => {
         </Route>
       </Switch>
       <Footer />
-    </Page>
+    </div>
   )
 }
 
