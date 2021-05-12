@@ -13,7 +13,6 @@ blogsRouter.get('/:id', async (request, response) => {
     const blog = await Blog
         .findById(request.params.id)
         .populate('user', { username: 1, name: 1 })
-
     if (blog) {
         response.json(blog)
     } else {
@@ -66,6 +65,16 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
     } else {
         return response.status(401).json({ error: 'token invalid' })
     }
+})
+
+blogsRouter.put('/:id/like', async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+    const opts = { new: true, runValidators: true, context: 'query' }
+    blog.likes += 1
+    const updatedBlog = await Blog
+        .findByIdAndUpdate(request.params.id, blog, opts)
+        .populate('user', { username: 1, name: 1 })
+    response.json(updatedBlog)
 })
 
 module.exports = blogsRouter

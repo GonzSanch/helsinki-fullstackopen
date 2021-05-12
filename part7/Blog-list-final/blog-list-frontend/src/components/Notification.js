@@ -6,7 +6,7 @@ const Notification = () => {
     if (message === null) {
         return null
     }
-
+    console.log('inside')
     return (
         <div className={message.status}>
             {message.content}

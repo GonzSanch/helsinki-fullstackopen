@@ -1,9 +1,9 @@
-const initialState = ''
+const initialState = null
 
 let timeoutID
 
 export const setNotification = (content, timeval) => {
-    return dispatch => {
+    return async dispatch => {
         if (timeoutID) clearTimeout(timeoutID)
         dispatch({
             type: 'SET_NOTIFICATION',
@@ -22,7 +22,7 @@ const notificationReducer = (state = initialState, action) => {
     case 'SET_NOTIFICATION':
         return action.data
     case 'REMOVE':
-        return ''
+        return null
     default:
         return state
     }
