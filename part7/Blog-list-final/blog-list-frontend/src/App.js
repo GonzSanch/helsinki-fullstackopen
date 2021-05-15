@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
-// , Link, useRouteMatch, Redirect
+import { Switch, Route, useRouteMatch, Link } from 'react-router-dom'
 
 import Blog from './components/Blog'
 import LoginForm from './components/Login'
@@ -16,6 +15,26 @@ import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUser, logOut, setUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
 
+const Menu = ({ user, handleLogout }) => {
+    const padding = {
+        paddingRight: 5
+    }
+
+    const style = {
+        background: 'lightgrey',
+        padding: '.5em'
+    }
+
+    return (
+        <div style={style}>
+            <Link to='/' style={padding}>blogs</Link>
+            <Link to='/users' style={padding}>users</Link>
+            {`${user.username} logged in `}
+            <button onClick={handleLogout}>logout</button>
+        </div>
+    )
+}
+
 const App = () => {
     const dispatch = useDispatch()
 
@@ -27,6 +46,22 @@ const App = () => {
     const [password, setPassword] = useState('')
 
     const blogFormRef = useRef()
+
+    const userById = (id) => users.find(a => a.id === id)
+    const blogById = (id) => blogs.find(a => a.id === id)
+
+    const matchUser = useRouteMatch('/users/:id')
+    const matchBlog = useRouteMatch('/blogs/:id')
+    const userSelected = matchUser ? userById(matchUser.params.id) : null
+    const blogSelected = matchBlog ? blogById(matchBlog.params.id) : null
+
+    const blogStyle = {
+        paddingTop: 10,
+        paddingLeft: 2,
+        border: 'solid',
+        borderWidth: 1,
+        marginBottom: 5
+    }
 
     useEffect(() => {
         dispatch(initializeBlogs())
@@ -67,10 +102,22 @@ const App = () => {
 
     return (
         <div>
+            <Menu handleLogout={handleLogout} user={user}/>
             <h1>Blog list app</h1>
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>logout</button>
             <Switch>
+                <Route path='/users/:id' >
+                    {userSelected ?
+                        <div id='user'>
+                            <h1>{userSelected.username}</h1>
+                            <h2>added blogs</h2>
+                            <ul>
+                                {userSelected.blogs.map(blog =>
+                                    <li key={blog.id}>{blog.title}</li>)
+                                }
+                            </ul>
+                        </div>
+                        : null}
+                </Route>
                 <Route path='/users'>
                     <h2>Users</h2>
                     <div id='users'>
@@ -82,13 +129,20 @@ const App = () => {
                                 </tr>
                                 {users.map(user =>
                                     <tr key={user.id}>
-                                        <td>{user.username}</td>
+                                        <td>
+                                            <Link to={`/users/${user.id}`}>{user.username}</Link>
+                                        </td>
                                         <td>{user.blogs.length}</td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
                     </div>
+                </Route>
+                <Route path='/blogs/:id' >
+                    {blogSelected ?
+                        <Blog blog={blogSelected} />
+                        : 'null'}
                 </Route>
                 <Route path='/'>
                     <h2>Blogs</h2>
@@ -100,7 +154,9 @@ const App = () => {
                         {blogs
                             .sort((a, b) => b.likes - a.likes)
                             .map(blog =>
-                                <Blog key={blog.id} blog={blog} />
+                                <div key={blog.id} style={blogStyle}>
+                                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                                </div>
                             )}
                     </div>
                 </Route>

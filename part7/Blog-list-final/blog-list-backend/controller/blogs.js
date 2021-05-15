@@ -77,4 +77,14 @@ blogsRouter.put('/:id/like', async (request, response) => {
     response.json(updatedBlog)
 })
 
+blogsRouter.post('/:id/comment', async (request, response) => {
+    const body = request.body
+
+    const opts = { new: true, runValidators:true, context: 'query' }
+    const UpdatedBlog = await Blog
+        .findByIdAndUpdate(request.params.id, { $push: { Comments: body } }, opts)
+        .populate('user', { username: 1, name: 1 })
+    response.json(UpdatedBlog)
+})
+
 module.exports = blogsRouter

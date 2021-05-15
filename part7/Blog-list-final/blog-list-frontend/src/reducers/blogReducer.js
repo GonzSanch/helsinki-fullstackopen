@@ -42,6 +42,16 @@ export const createBlog = (content) => {
     }
 }
 
+export const addComment = (id, content) => {
+    return async dispatch => {
+        const updatedBlog = await blogsServices.addComment(id, content)
+        dispatch({
+            type: 'ADD_COMMENT',
+            data: updatedBlog
+        })
+    }
+}
+
 const blogReducer = (state = initialState, action) => {
     switch (action.type) {
     case 'INIT_BLOGS':
@@ -55,6 +65,11 @@ const blogReducer = (state = initialState, action) => {
         }
         return state.map(blog =>
             blog.id !== id ? blog : changedBlog)
+    }
+    case 'ADD_COMMENT': {
+        const id = action.data.id
+        return state.map(blog =>
+            blog.id !== id ? blog : action.data)
     }
     case 'DELETE':
         return state.filter(blog => blog.id !== action.data.id)
