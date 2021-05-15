@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
 
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
@@ -14,7 +15,7 @@ const CreateBlogForm = ({ refparent }) => {
     const handleTitleChange = (event) => {
         setTitle(event.target.value)
     }
-    const handleAuthorChange = ( event ) => {
+    const handleAuthorChange = (event) => {
         setAuthor(event.target.value)
     }
     const handleUrlChange = (event) => {
@@ -31,19 +32,36 @@ const CreateBlogForm = ({ refparent }) => {
             setAuthor('')
             setUrl('')
         } catch (exception) {
-            dispatch(setNotification({ content: exception.response.data.error, status: 'error' }, 5))
+            dispatch(setNotification({ content: exception.response.data.error, status: 'danger' }, 5))
         }
     }
 
     return (
         <div className='formDiv'>
             <h2>Add new Blog</h2>
-            <form onSubmit={addBlog}>
-                <div>title: <input id="title" value={title} onChange={handleTitleChange} /></div>
-                <div>author: <input id="author" value={author} onChange={handleAuthorChange} /></div>
-                <div>url: <input id="url" value={url} onChange={handleUrlChange} /></div>
-                <div> <button id="createBlog-button" type="submit">create</button> </div>
-            </form>
+            <Form onSubmit={addBlog}>
+                <Form.Group>
+                    <Form.Label>title: </Form.Label>
+                    <Form.Control
+                        id="title"
+                        value={title}
+                        onChange={handleTitleChange}
+                    />
+                    <Form.Label>author: </Form.Label>
+                    <Form.Control
+                        id="author"
+                        value={author}
+                        onChange={handleAuthorChange}
+                    />
+                    <Form.Label>url: </Form.Label>
+                    <Form.Control
+                        id="url"
+                        value={url}
+                        onChange={handleUrlChange}
+                    />
+                    <Button variant='primary' type='submit'>create</Button>
+                </Form.Group>
+            </Form>
         </div>
     )
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch, Route, useRouteMatch, Link } from 'react-router-dom'
+import { Navbar, Nav, Button } from 'react-bootstrap'
 
 import Blog from './components/Blog'
 import LoginForm from './components/Login'
@@ -20,18 +21,24 @@ const Menu = ({ user, handleLogout }) => {
         paddingRight: 5
     }
 
-    const style = {
-        background: 'lightgrey',
-        padding: '.5em'
-    }
-
     return (
-        <div style={style}>
-            <Link to='/' style={padding}>blogs</Link>
-            <Link to='/users' style={padding}>users</Link>
-            {`${user.username} logged in `}
-            <button onClick={handleLogout}>logout</button>
-        </div>
+        <Navbar collapseOnSelect expand='lg' variant='light'>
+            <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+            <Navbar.Collapse id='responsive-navbar-nav'>
+                <Nav className='mr-auto'>
+                    <Nav.Link href='#' as='span'>
+                        <Link to='/' style={padding}>blogs</Link>
+                    </Nav.Link>
+                    <Nav.Link href='#' as='span'>
+                        <Link to='/users' style={padding}>users</Link>
+                    </Nav.Link>
+                    <div style={padding}>
+                        {`${user.username} logged in `}
+                        <Button onClick={handleLogout}>logout</Button>
+                    </div>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
     )
 }
 
@@ -80,7 +87,7 @@ const App = () => {
             setUsername('')
             setPassword('')
         } catch (exception) {
-            dispatch(setNotification({ content: 'Wrong credentials', status: 'error' }, 5))
+            dispatch(setNotification({ content: 'Wrong credentials', status: 'danger' }, 5))
         }
     }
 
@@ -90,19 +97,21 @@ const App = () => {
 
     if (user === null) {
         return (
-            <LoginForm
-                handleSubmit={handleLogin}
-                handleUsernameChange={({ target }) => setUsername(target.value)}
-                handlePasswordChange={({ target }) => setPassword(target.value)}
-                username={username}
-                password={password}
-            />
+            <div className='container'>
+                <LoginForm
+                    handleSubmit={handleLogin}
+                    handleUsernameChange={({ target }) => setUsername(target.value)}
+                    handlePasswordChange={({ target }) => setPassword(target.value)}
+                    username={username}
+                    password={password}
+                />
+            </div>
         )
     }
 
     return (
-        <div>
-            <Menu handleLogout={handleLogout} user={user}/>
+        <div className='container'>
+            <Menu handleLogout={handleLogout} user={user} />
             <h1>Blog list app</h1>
             <Switch>
                 <Route path='/users/:id' >

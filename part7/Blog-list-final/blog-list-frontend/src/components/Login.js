@@ -1,5 +1,6 @@
 import React from 'react'
 import PropType from 'prop-types'
+import { Button, Form } from 'react-bootstrap'
 
 import Notification from './Notification'
 
@@ -12,11 +13,11 @@ const LoginForm = ({
 }) => (
     <div>
         <h1>log in to application</h1>
-        <Notification/>
-        <form onSubmit={handleSubmit}>
-            <div>
-                username
-                <input
+        <Notification />
+        <Form onSubmit={handleSubmit}>
+            <Form.Group>
+                <Form.Label>Username</Form.Label>
+                <Form.Control
                     id="username"
                     type="text"
                     autoComplete="username"
@@ -24,10 +25,8 @@ const LoginForm = ({
                     name="Username"
                     onChange={handleUsernameChange}
                 />
-            </div>
-            <div>
-                password
-                <input
+                <Form.Label>Password</Form.Label>
+                <Form.Control
                     id="password"
                     type="password"
                     autoComplete="current-password"
@@ -35,9 +34,9 @@ const LoginForm = ({
                     name="Password"
                     onChange={handlePasswordChange}
                 />
-            </div>
-            <button id="login-button" type='submit'>login</button>
-        </form>
+                <Button variant='primary' type='submit'>login</Button>
+            </Form.Group>
+        </Form>
     </div>
 )
 
