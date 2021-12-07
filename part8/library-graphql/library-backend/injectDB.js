@@ -2,13 +2,10 @@ const mongoose = require("mongoose");
 const author = require("./models/author");
 const book = require("./models/book");
 
-const MONGODB_URI =
-  "mongodb+srv://fullstack:nGmUTD3IceCxSETu@cluster0.qebfq.mongodb.net/library?retryWrites=true";
-
-console.log(`conecting to ${MONGODB_URI}`);
+console.log(`conecting to mongoDB`);
 
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: true,
